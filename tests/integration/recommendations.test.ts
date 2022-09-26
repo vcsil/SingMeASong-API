@@ -100,7 +100,29 @@ describe("Testa GET /top/amount", () => {
     });
 });
 
+describe("Testa GET /:id", () => {
+    it("Testa com música existente -> deve retornar um objeto com a música", async () => {
+        const recommendation = createRecommendationMusic();
 
+        await server.post("/recommendations").send(recommendation);
+        const createdRecommendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        const result = await server
+            .get(`/recommendations/${createdRecommendation?.id}`)
+            .send();
+
+        expect(result.body).not.toBeFalsy();
+        expect(createdRecommendation?.name).toBe(recommendation.name);
+    });
+
+    it("Testa com id não cadastrado no banco -> deve retornar 404", async () => {
+        const result = await server.get("/recommendations/1").send();
+
+        expect(result.status).toBe(404);
+    });
+});
 
 afterAll(async () => {
     await prisma.$disconnect();
