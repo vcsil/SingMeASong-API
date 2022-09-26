@@ -7,12 +7,17 @@
       "node": true
     },
     "extends": [
-        "airbnb-typescript/base"
+        "airbnb-typescript/base",
+        "eslint:recommended",
+        "plugin:prettier/recommended",
+        "prettier/@typescript-eslint",
+        "plugin:@typescript-eslint/recommended"
     ],
     "plugins": [
         "import", 
         "@typescript-eslint",
-        "prettier"
+        "prettier",
+        "simple-import-sort"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -21,6 +26,8 @@
         "project": "./tsconfig.eslint.json"
     },
     "rules": {
-        "indent": "off"
+        "indent": "off",
+        "prettier/prettier": "error",
+        "simple-import-sort/sort": "warn"
     }
 }
