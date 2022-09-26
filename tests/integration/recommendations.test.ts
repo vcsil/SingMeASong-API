@@ -89,6 +89,19 @@ describe("Testa GET /random", () => {
     });
 });
 
+describe("Testa GET /top/amount", () => {
+    it("Testa corretamente -> deve retornar um array", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+        const result = await server.get("/recommendations/top/1").send();
+
+        expect(result.body).toBeInstanceOf(Array);
+    });
+});
+
+
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
