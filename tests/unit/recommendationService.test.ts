@@ -1,3 +1,5 @@
+import { Recommendation } from "@prisma/client";
+import { faker } from "@faker-js/faker";
 import { jest } from "@jest/globals";
 
 import { createCompleteRecommendationMusic } from '../factories/generateMusicRecommendation';
@@ -87,6 +89,78 @@ describe("Testa service upvote", () => {
         await recommendationService.upvote(recommendation.id);
 
         expect(recommendationRepository.updateScore).toBeCalled();
+    });
+});
+
+describe("Testa service downvote", () => {
+    it("Testa com id inválido", () => {
+        jest.spyOn(recommendationRepository, "find").mockImplementationOnce(
+            (message): any => {
+                return false;
+            }
+        );
+
+        const id = 1;
+        const promise = recommendationService.downvote(id);
+
+        expect(promise).rejects.toEqual({
+            type: "not_found",
+            message: "",
+        });
+    });
+
+    it("Testa com id válido", async () => {
+        const updatedRecommendation: Recommendation = {
+            id: 1,
+            name: faker.lorem.words(3),
+            youtubeLink: faker.internet.url(),
+            score: 9,
+        };
+
+        jest.spyOn(recommendationRepository, "find").mockImplementationOnce(
+            (message): any => {
+                return true;
+            }
+        );
+
+        jest.spyOn(recommendationRepository,"updateScore").mockResolvedValueOnce(updatedRecommendation);
+
+        jest.spyOn(recommendationRepository, "remove").mockImplementationOnce(
+            (): any => {}
+        );
+
+        await recommendationService.downvote(updatedRecommendation.id);
+
+        expect(recommendationRepository.updateScore).toBeCalled();
+        expect(recommendationRepository.remove).not.toBeCalled();
+    });
+
+    it("Testa com id válido e delete no final", async () => {
+        const updatedRecommendation: Recommendation = {
+            id: 1,
+            name: faker.lorem.words(3),
+            youtubeLink: faker.internet.url(),
+            score: -10,
+        };
+
+        jest.spyOn(recommendationRepository, "find").mockImplementationOnce(
+            (message): any => {
+                return true;
+            }
+        );
+
+        jest.spyOn(
+            recommendationRepository,
+            "updateScore"
+        ).mockResolvedValueOnce(updatedRecommendation);
+
+        jest.spyOn(recommendationRepository, "remove").mockImplementationOnce(
+            (): any => {}
+        );
+
+        await recommendationService.downvote(updatedRecommendation.id);
+        expect(recommendationRepository.updateScore).toBeCalled();
+        expect(recommendationRepository.remove).toBeCalled();
     });
 });
 
