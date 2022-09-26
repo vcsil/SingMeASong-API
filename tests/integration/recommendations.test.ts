@@ -124,6 +124,34 @@ describe("Testa GET /:id", () => {
     });
 });
 
+describe("Testa POST /:id/upvote", () => {
+    it("Testa com id existente -> deve retornar 200", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+        const createdRecommendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        const result = await server.post(
+            `/recommendations/${createdRecommendation?.id}/upvote`
+        );
+
+        const votedRecomendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        expect(result.status).toBe(200);
+        expect(votedRecomendation?.score).toBe(createdRecommendation?.score || 0  + 1);
+    });
+
+    it("Testa com id não castrado no banco -> deve retornar 404", async () => {
+        const result = await server.post(`/recommendations/1/upvote`);
+
+        expect(result.status).toBe(404);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
