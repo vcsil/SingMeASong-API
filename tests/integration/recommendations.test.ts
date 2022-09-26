@@ -152,6 +152,60 @@ describe("Testa POST /:id/upvote", () => {
     });
 });
 
+describe("Testa POST /:id/downvote", () => {
+    it("Testa com id existente e não deve deletar recomendação -> deve retornar 200", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+        const createdRecommendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        const result = await server.post(
+            `/recommendations/${createdRecommendation?.id}/downvote`
+        );
+
+        const votedRecomendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        expect(result.status).toBe(200);
+        expect(votedRecomendation?.score).toBe(createdRecommendation?.score || 0 - 1);
+    });
+
+    it("Testa com id não castrado no banco -> deve retornar 404", async () => {
+        const result = await server.post(`/recommendations/1/downvote`);
+
+        expect(result.status).toBe(404);
+    });
+
+    it("Testa com id existente e deve deletar recomendação -> deve retornar 200", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+        const createdRecommendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        for (let i = 0; i < 5; i++) {
+            await server
+                .post(`/recommendations/${createdRecommendation?.id}/downvote`)
+                .send();
+        }
+
+        const result = await server
+            .post(`/recommendations/${createdRecommendation?.id}/downvote`)
+            .send();
+
+        const deletedRecommendation = await prisma.recommendation.findFirst({
+            where: { name: recommendation.name },
+        });
+
+        expect(result.status).toBe(200);
+        expect(deletedRecommendation).toBeFalsy();
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
