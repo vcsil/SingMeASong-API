@@ -83,8 +83,6 @@ describe("Testa GET /random", () => {
 
         const { body } = await server.get("/recommendations/random").send();
 
-        console.log(body)
-
         expect(body).toBeInstanceOf(Object);
     });
 });
