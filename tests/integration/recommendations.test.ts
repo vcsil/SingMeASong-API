@@ -38,6 +38,19 @@ describe("Testa POST /", () => {
     });
 });
 
+describe("Testa GET /", () => {
+    it("Testa corretamente -> deve retornar um array as 10 últimas recomendações de música", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+        const { body } = await server.get("/recommendations").send();
+
+        expect(body).toBeInstanceOf(Array);
+        expect(body[0].name).toBe(recommendation.name);
+        expect(body[0].youtubeLink).toBe(recommendation.youtubeLink);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
