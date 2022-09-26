@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../database.js";
-import { CreateRecommendationData } from "../services/recommendationsService.js";
+import { prisma } from "../database";
+import { CreateRecommendationData } from "../services/recommendationsService";
 
 async function create(createRecommendationData: CreateRecommendationData) {
   await prisma.recommendation.create({
@@ -69,6 +69,10 @@ async function remove(id: number) {
   });
 }
 
+async function truncateForE2eTesting() {
+  await prisma.$executeRaw`TRUNCATE TABLE recommendations`;
+}
+
 export const recommendationRepository = {
   create,
   findAll,
@@ -77,4 +81,5 @@ export const recommendationRepository = {
   updateScore,
   getAmountByScore,
   remove,
+  truncateForE2eTesting
 };

@@ -1,6 +1,6 @@
 import { Recommendation } from "@prisma/client";
-import { recommendationRepository } from "../repositories/recommendationRepository.js";
-import { conflictError, notFoundError } from "../utils/errorUtils.js";
+import { recommendationRepository } from "../repositories/recommendationRepository";
+import { conflictError, notFoundError } from "../utils/errorUtils";
 
 export type CreateRecommendationData = Omit<Recommendation, "id" | "score">;
 
@@ -82,6 +82,10 @@ function getScoreFilter(random: number) {
   return "lte";
 }
 
+async function truncateForE2eTesting() {
+  await recommendationRepository.truncateForE2eTesting();
+}
+
 export const recommendationService = {
   insert,
   upvote,
@@ -90,4 +94,5 @@ export const recommendationService = {
   get,
   getById: getByIdOrFail,
   getTop,
+  truncateForE2eTesting
 };

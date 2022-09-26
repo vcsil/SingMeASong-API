@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { recommendationSchema } from "../schemas/recommendationsSchemas.js";
-import { recommendationService } from "../services/recommendationsService.js";
-import { wrongSchemaError } from "../utils/errorUtils.js";
+import { recommendationSchema } from "../schemas/recommendationsSchemas";
+import { recommendationService } from "../services/recommendationsService";
+import { wrongSchemaError } from "../utils/errorUtils";
 
 async function insert(req: Request, res: Response) {
   const validation = recommendationSchema.validate(req.body);
@@ -55,6 +55,12 @@ async function getById(req: Request, res: Response) {
   res.send(recommendation);
 }
 
+async function resetE2e(req: Request, res: Response) {
+  await recommendationService.truncateForE2eTesting();
+
+  res.sendStatus(200);
+}
+
 export const recommendationController = {
   insert,
   upvote,
@@ -63,4 +69,5 @@ export const recommendationController = {
   getTop,
   get,
   getById,
+  resetE2e
 };
