@@ -205,6 +205,50 @@ describe("Testa service getTop", () => {
     });
 });
 
+describe("Testa service getRandom", () => {
+    it("Deve retornar recomendação aleatória com filtros", async () => {
+        const recommendation = createCompleteRecommendationMusic();
+
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([
+            recommendation,
+            recommendation,
+        ]);
+
+        const result = await recommendationService.getRandom();
+
+        expect(result).toBeInstanceOf(Object);
+    });
+    it("Não deve retornar recomendações", async () => {
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
+
+        const result = recommendationService.getRandom();
+
+        expect(result).rejects.toEqual({
+            type: "not_found",
+            message: "",
+        });
+    });
+    it("Deve retornar recomendação com votos entre -5 e 10", async () => {
+        const recommendation1 = createCompleteRecommendationMusic();
+        const recommendation2 = createCompleteRecommendationMusic();
+        const recommendation3 = createCompleteRecommendationMusic();
+
+        recommendation1.score = 7;
+        recommendation2.score = -1;
+        recommendation3.score = 50;
+
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([
+            recommendation1,
+            recommendation2,
+            recommendation3,
+        ]);
+
+        const result = await recommendationService.getRandom();
+
+        expect(result).toBeInstanceOf(Object);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
   });
