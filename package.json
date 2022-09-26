@@ -1,13 +1,12 @@
 {
   "name": "typescript-back-template",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "tsc && npx prisma generate && npx prisma migrate deploy",
     "start": "node dist/server.js",
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon ./src/server.ts",
     "prismaMigrations": "npx dotenv-cli -e .env.test npx prisma migrate dev",
     "test:unit": "npm run prismaMigrations && dotenv -e .env.test jest -- -i --coverage --testPathPattern=tests/unit",
     "test:integration": "npm run prismaMigrations && dotenv -e .env.test jest -- -i --coverage --testPathPattern=tests/integration"
