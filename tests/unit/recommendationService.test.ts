@@ -47,6 +47,49 @@ describe("Testa service Insert", () => {
     });
 });
 
+describe("Testa service upvote", () => {
+    it("Testa com id inválido", () => {
+        jest.spyOn(recommendationRepository, "find").mockImplementationOnce(
+            (): any => {
+                return null;
+            }
+        );
+
+        jest.spyOn(recommendationRepository,"updateScore").mockResolvedValueOnce(
+            {
+                id: 1,
+                name: 'não passa',
+                youtubeLink: 'https://www.youtube.com',
+                score: 10
+            }
+        );
+
+        const promise = recommendationService.upvote(1);
+
+        expect(recommendationRepository.updateScore).not.toBeCalled();
+        expect(promise).rejects.toEqual({
+            type: "not_found",
+            message: "",
+        });
+    });
+
+    it("Testa com id válido", async () => {
+        const recommendation = createCompleteRecommendationMusic();
+
+        jest.spyOn(recommendationRepository, "find").mockImplementationOnce(
+            (): any => {
+                return recommendation;
+            }
+        );
+
+        jest.spyOn(recommendationRepository,"updateScore").mockResolvedValueOnce(recommendation);
+
+        await recommendationService.upvote(recommendation.id);
+
+        expect(recommendationRepository.updateScore).toBeCalled();
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
   });
