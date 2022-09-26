@@ -51,6 +51,44 @@ describe("Testa GET /", () => {
     });
 });
 
+describe("Testa GET /random", () => {
+    it("Testa sem músicas cadastradas -> deve retornar 404", async () => {
+        const result = await server.get("/recommendations/random").send();
+
+        expect(result.status).toBe(404);
+    });
+
+    it("Testa com músicas cadastradas -> deve retornar um objeto de música", async () => {
+        const recommendation = createRecommendationMusic();
+
+        await server.post("/recommendations").send(recommendation);
+
+        const result = await server.get("/recommendations/random").send();
+
+        expect(result.body).toBeInstanceOf(Object);
+    });
+
+    it("Testa com músicas cadastradas -> deve retornar um objeto de música", async () => {
+        const recommendation1 = createRecommendationMusic();
+        const recommendation2 = createRecommendationMusic();
+        const recommendation3 = createRecommendationMusic();
+
+        await prisma.recommendation.createMany({
+            data: [
+                { ...recommendation1, score: 7 }, 
+                { ...recommendation2, score: -1 }, 
+                { ...recommendation3, score: 50 }
+            ]
+        })
+
+        const { body } = await server.get("/recommendations/random").send();
+
+        console.log(body)
+
+        expect(body).toBeInstanceOf(Object);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
