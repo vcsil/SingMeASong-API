@@ -96,7 +96,9 @@ function getRandomInt(min: number, max: number): number {
 export function createRecommendationMusic(): CreateRecommendationData {
     const idx = getRandomInt(1, 20);
 
-    return randomLinks[idx]
+    const { name, youtubeLink } = randomLinks[idx];
+
+    return { name: name + ' ' + faker.datatype.number(999), youtubeLink}
 }
 
 export function createCompleteRecommendationMusic(): Recommendation {
