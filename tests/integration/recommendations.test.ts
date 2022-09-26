@@ -204,6 +204,14 @@ describe("Testa POST /:id/downvote", () => {
     });
 });
 
+describe("Testa DELETE /e2eReset ", () => {
+    it("Deve retornar 200", async () => {
+        const result = await server.delete("/recommendations/e2eReset").send();
+
+        expect(result.status).toBe(200);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
 });
