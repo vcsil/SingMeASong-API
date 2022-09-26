@@ -194,6 +194,17 @@ describe("Testa service get", () => {
     });
 });
 
+describe("Testa service getTop", () => {
+    it("Deve retornar um array de recomendações ordenadas", async () => {
+        jest.spyOn(recommendationRepository,"getAmountByScore").mockResolvedValue([]);
+
+        const amount = 1;
+        const result = await recommendationService.getTop(amount);
+
+        expect(result).toBeInstanceOf(Array);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
   });
