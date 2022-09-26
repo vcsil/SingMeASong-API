@@ -164,6 +164,26 @@ describe("Testa service downvote", () => {
     });
 });
 
+describe('Testa service getByIdOrFail', () => {
+    it('Deve retornar uma recommendation', async () => {
+        const recomendacao = createCompleteRecommendationMusic()
+
+        jest.spyOn(recommendationRepository, "find").mockResolvedValue(recomendacao);
+
+        const result = await recommendationService.getById(1);
+
+        expect(recommendationRepository.find).toBeCalled();
+    })
+    it('Deve retornar um erro', async () => {
+        const result = recommendationService.getById(1);
+
+        expect(result).rejects.toEqual({
+            type: "not_found",
+            message: "",
+        });
+    })
+})
+
 afterAll(async () => {
     await prisma.$disconnect();
   });
