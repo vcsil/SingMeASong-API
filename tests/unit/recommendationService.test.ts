@@ -246,3 +246,13 @@ describe("Testa service getRandom", () => {
         expect(result).toBeInstanceOf(Object);
     });
 });
+
+describe("Testa service truncateForE2eTesting", () => {
+    it("Deve chamar repositoru", async () => {
+        jest.spyOn(recommendationRepository,"truncateForE2eTesting").mockResolvedValue();
+
+        const result = await recommendationService.truncateForE2eTesting();
+
+        expect(recommendationRepository.truncateForE2eTesting).toBeCalled();
+    });
+});
