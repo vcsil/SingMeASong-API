@@ -184,6 +184,16 @@ describe('Testa service getByIdOrFail', () => {
     })
 })
 
+describe("Testa service get", () => {
+    it("Deve retornar um array de recomendações", async () => {
+        jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
+
+        const result = await recommendationService.get();
+
+        expect(result).toBeInstanceOf(Array);
+    });
+});
+
 afterAll(async () => {
     await prisma.$disconnect();
   });
